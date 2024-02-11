@@ -1,4 +1,5 @@
 {   "parent": "block/block",
+    "render_type": "cutout",
   "textures": {
     "particle": "block/stripped_spruce_log_top",
     "bottom": "block/stripped_spruce_log_top",
