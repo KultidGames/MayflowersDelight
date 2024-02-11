@@ -166,7 +166,7 @@ public class DryingTableBlockEntity extends BlockEntity implements MenuProvider 
     }
 
     private static boolean canInsertItemIntoOutputSlot(SimpleContainer inventory, ItemStack itemStack) {
-        return inventory.getItem(1).getItem() == itemStack.getItem() || inventory.getItem(1).isEmpty();
+        return inventory.getItem(0).getItem() == itemStack.getItem() || inventory.getItem(0).isEmpty();
     }
 
     private static boolean canInsertAmountintoOutputSlot(SimpleContainer inventory) {
