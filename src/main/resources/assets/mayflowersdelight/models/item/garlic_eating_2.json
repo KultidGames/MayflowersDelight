@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "mayflowersdelight:item/garlic_eating_2"
+  }
+}
