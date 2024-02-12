@@ -18,7 +18,7 @@ public class DryingTableMenu extends AbstractContainerMenu {
     public final ContainerData data;
 
     public DryingTableMenu(int id, Inventory inv, FriendlyByteBuf extraData){
-        this(id, inv, inv.player.level.getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(1));
+        this(id, inv, inv.player.level.getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(2));
     }
 
     public DryingTableMenu(int id, Inventory inv, BlockEntity entity, ContainerData data){
@@ -46,7 +46,7 @@ public class DryingTableMenu extends AbstractContainerMenu {
     public int getScaledProgress() {
         int progress = this.data.get(0);
         int maxProgress = this.data.get(1);  // Max Progress
-        int progressArrowSize = 26; // This is the height in pixels of your arrow
+        int progressArrowSize = 42; // This is the height in pixels of your arrow
 
         return maxProgress != 0 && progress != 0 ? progress * progressArrowSize / maxProgress : 0;
     }

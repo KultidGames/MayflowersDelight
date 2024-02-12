@@ -39,7 +39,7 @@ public class DryingTableBlockEntity extends BlockEntity implements MenuProvider 
 
     protected final ContainerData data;
     private int progress = 0;
-    private int maxProgress = 100; //Change me for length
+    private int maxProgress = 50; //Change me for length of crafting
 
     public DryingTableBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.DRYING_TABLE.get(), pos, state);
@@ -103,6 +103,7 @@ public class DryingTableBlockEntity extends BlockEntity implements MenuProvider 
     @Override
     protected void saveAdditional(CompoundTag nbt) {
         nbt.put("inventory", itemHandler.serializeNBT());
+        nbt.putInt("drying_table.progress", this.progress);
 
         super.saveAdditional(nbt);
     }
@@ -111,6 +112,7 @@ public class DryingTableBlockEntity extends BlockEntity implements MenuProvider 
     public void load(CompoundTag nbt) {
         super.load(nbt);
         itemHandler.deserializeNBT(nbt.getCompound("inventory"));
+        progress = nbt.getInt("drying_table.progress");
     }
 
     public void drops(){
@@ -128,6 +130,7 @@ public class DryingTableBlockEntity extends BlockEntity implements MenuProvider 
         }
 
         if(hasRecipe(pEntity)) {
+       //     System.out.print("progress:" + pEntity.progress + "/N");
             pEntity.progress++;
             setChanged(level, pos, state);
 
@@ -162,16 +165,18 @@ public class DryingTableBlockEntity extends BlockEntity implements MenuProvider 
 
         boolean doesWorkInFirstSlot = pEntity.itemHandler.getStackInSlot(0).getItem() == ModItems.BARLEY.get();
 
-        return doesWorkInFirstSlot && canInsertAmountintoOutputSlot(inventory) && canInsertItemIntoOutputSlot(inventory, new ItemStack(Items.WHEAT, 1));
+        return doesWorkInFirstSlot && canInsertAmountIntoOutputSlot(inventory) && canInsertItemIntoOutputSlot(inventory, new ItemStack(ModItems.LOGO.get(), 1));
     }
 
     private static boolean canInsertItemIntoOutputSlot(SimpleContainer inventory, ItemStack itemStack) {
-        return inventory.getItem(0).getItem() == itemStack.getItem() || inventory.getItem(0).isEmpty();
+        return inventory.getItem(1).getItem() == itemStack.getItem() || inventory.getItem(1).isEmpty();
     }
 
-    private static boolean canInsertAmountintoOutputSlot(SimpleContainer inventory) {
-        return inventory.getItem(1).getMaxStackSize() > inventory.getItem(1).getCount();
+    private static boolean canInsertAmountIntoOutputSlot(SimpleContainer inventory) {
+        ItemStack outputSlot = inventory.getItem(1);
+        return outputSlot.isEmpty() || outputSlot.getCount() < outputSlot.getMaxStackSize();
     }
+
 
 
 }
