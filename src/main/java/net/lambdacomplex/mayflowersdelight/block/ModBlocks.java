@@ -3,6 +3,7 @@ package net.lambdacomplex.mayflowersdelight.block;
 import net.lambdacomplex.mayflowersdelight.MayflowersDelightMain;
 import net.lambdacomplex.mayflowersdelight.block.custom.BasicCropBlock;
 import net.lambdacomplex.mayflowersdelight.block.custom.DryingTableBlock;
+import net.lambdacomplex.mayflowersdelight.block.custom.IvyBlock;
 import net.lambdacomplex.mayflowersdelight.item.ModCreativeTab;
 import net.lambdacomplex.mayflowersdelight.item.ModItems;
 import net.minecraft.world.item.BlockItem;
@@ -10,6 +11,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -24,6 +26,7 @@ public class ModBlocks {
     public static DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MayflowersDelightMain.MODID);
 
     public static final RegistryObject<Block> TEST_BLOCK = registerBlock("testblock", () -> new Block(BlockBehaviour.Properties.of(Material.CACTUS)), ModCreativeTab.MOD_TAB, true);
+    public static final RegistryObject<Block> COMMON_IVY = registerBlock("common_ivy", () -> new IvyBlock(BlockBehaviour.Properties.of(Material.REPLACEABLE_PLANT).noCollission().noOcclusion().randomTicks().strength(0.2f).sound(SoundType.VINE)), ModCreativeTab.MOD_TAB, true);
     public static final RegistryObject<Block> DRYING_TABLE = registerBlock("drying_table", () -> new DryingTableBlock(BlockBehaviour.Properties.of(Material.WOOD)), ModCreativeTab.MOD_TAB, true);
 
     //Vegetables

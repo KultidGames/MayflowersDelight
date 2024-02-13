@@ -36,7 +36,7 @@ public class DryingTableScreen extends AbstractContainerScreen<DryingTableMenu> 
 
     private void renderProgressArrow(PoseStack pPoseStack, int x, int y) {
         if(menu.isCrafting()) {
-            blit(pPoseStack, x + 63, y + 25, 174, 0, 50, menu.getScaledProgress()); //Where it should draw on the screen
+            blit(pPoseStack, x + 63, y + 26, 176, 0, 50, menu.getScaledProgress()); //Where it should draw on the screen
         }
     }
 

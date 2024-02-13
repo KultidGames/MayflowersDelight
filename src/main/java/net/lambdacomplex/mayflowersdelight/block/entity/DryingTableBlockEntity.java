@@ -63,7 +63,7 @@ public class DryingTableBlockEntity extends BlockEntity implements MenuProvider 
 
             @Override
             public int getCount() {
-                return 1;
+                return 2;
             }
         };
     }
@@ -125,19 +125,29 @@ public class DryingTableBlockEntity extends BlockEntity implements MenuProvider 
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, DryingTableBlockEntity pEntity) {
-        if(level.isClientSide()){
+        if (level.isClientSide()) {
             return;
         }
+        // Debug: Check if the tick method is being called.
+        System.out.println("Tick called for DryingTableBlockEntity at " + pos);
 
-        if(hasRecipe(pEntity)) {
-       //     System.out.print("progress:" + pEntity.progress + "/N");
+        if (hasRecipe(pEntity)) {
+            // Debug: Check if the recipe is detected.
+            System.out.println("Recipe detected, progressing. Current progress: " + pEntity.progress);
+
             pEntity.progress++;
             setChanged(level, pos, state);
 
-            if(pEntity.progress >= pEntity.maxProgress){
+            if (pEntity.progress >= pEntity.maxProgress) {
+                // Debug: Check if crafting is triggered.
+                System.out.println("Crafting triggered.");
                 craftItem(pEntity);
             }
         } else {
+            if (pEntity.progress > 0) {
+                // Debug: Check if the progress is reset when it should not.
+                System.out.println("Progress reset unexpectedly.");
+            }
             pEntity.resetProgress();
             setChanged(level, pos, state);
         }
@@ -148,34 +158,51 @@ public class DryingTableBlockEntity extends BlockEntity implements MenuProvider 
     }
 
     private static void craftItem(DryingTableBlockEntity pEntity) {
+        if (hasRecipe(pEntity)) {
+            // Debug: Log the state before crafting.
+            System.out.println("Crafting item. Current output before crafting: " + pEntity.itemHandler.getStackInSlot(1).getCount());
 
-        if(hasRecipe(pEntity)){
-            pEntity.itemHandler.extractItem(0,1,false);
-            pEntity.itemHandler.setStackInSlot(1, new ItemStack(Items.WHEAT, pEntity.itemHandler.getStackInSlot(1).getCount() + 1));
+            pEntity.itemHandler.extractItem(0, 1, false);
+
+            ItemStack outputStack = pEntity.itemHandler.getStackInSlot(1);
+            if (!outputStack.isEmpty()) {
+                outputStack.grow(1);
+            } else {
+                pEntity.itemHandler.setStackInSlot(1, new ItemStack(Items.APPLE, 1));
+            }
+
+            // Debug: Log the state after crafting.
+            System.out.println("Crafting completed. New output count: " + pEntity.itemHandler.getStackInSlot(1).getCount());
 
             pEntity.resetProgress();
+        } else {
+            // Debug: If crafting fails due to recipe check
+            System.out.println("Crafting failed. Recipe check did not pass.");
         }
     }
 
-    private static boolean hasRecipe(DryingTableBlockEntity pEntity) {
-        SimpleContainer inventory = new SimpleContainer(pEntity.itemHandler.getSlots());
-        for (int i = 0; i < pEntity.itemHandler.getSlots(); i++) {
-            inventory.setItem(i, pEntity.itemHandler.getStackInSlot(i));
+
+
+    private static boolean hasRecipe(DryingTableBlockEntity entity) {
+        SimpleContainer inventory = new SimpleContainer(entity.itemHandler.getSlots());
+        for (int i = 0; i < entity.itemHandler.getSlots(); i++) {
+            inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
         }
 
-        boolean doesWorkInFirstSlot = pEntity.itemHandler.getStackInSlot(0).getItem() == ModItems.BARLEY.get();
-
-        return doesWorkInFirstSlot && canInsertAmountIntoOutputSlot(inventory) && canInsertItemIntoOutputSlot(inventory, new ItemStack(ModItems.LOGO.get(), 1));
+        boolean hasCraftableItemInFirstSlot = entity.itemHandler.getStackInSlot(0).getItem() == ModItems.BARLEY.get();
+        System.out.println("Checking recipe conditions.");
+        return hasCraftableItemInFirstSlot && canInsertAmountIntoOutputSlot(inventory) &&
+                canInsertItemIntoOutputSlot(inventory, new ItemStack(ModItems.LOGO.get(), 1));
     }
 
-    private static boolean canInsertItemIntoOutputSlot(SimpleContainer inventory, ItemStack itemStack) {
-        return inventory.getItem(1).getItem() == itemStack.getItem() || inventory.getItem(1).isEmpty();
+    private static boolean canInsertItemIntoOutputSlot(SimpleContainer inventory, ItemStack stack) {
+        return inventory.getItem(1).getItem() == stack.getItem() || inventory.getItem(1).isEmpty();
     }
 
     private static boolean canInsertAmountIntoOutputSlot(SimpleContainer inventory) {
-        ItemStack outputSlot = inventory.getItem(1);
-        return outputSlot.isEmpty() || outputSlot.getCount() < outputSlot.getMaxStackSize();
+        return inventory.getItem(1).getMaxStackSize() > inventory.getItem(1).getCount();
     }
+
 
 
 
