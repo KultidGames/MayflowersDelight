@@ -13,6 +13,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -26,6 +27,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -55,10 +57,16 @@ public class IvyBlock extends Block implements IForgeShearable {
     private static final VoxelShape SOUTH_AABB = Block.box(0.0D, 0.0D, 15.1D, 16.1D, 16.1D, 16.1D);
     private final Map<BlockState, VoxelShape> shapesCache;
 
-    public IvyBlock(BlockBehaviour.Properties p_57847_) {
-        super(p_57847_);
+    public IvyBlock(BlockBehaviour.Properties properties) {
+        super(properties);
+        properties.sound(SoundType.VINE);
         this.registerDefaultState(this.stateDefinition.any().setValue(UP, Boolean.valueOf(false)).setValue(NORTH, Boolean.valueOf(false)).setValue(EAST, Boolean.valueOf(false)).setValue(SOUTH, Boolean.valueOf(false)).setValue(WEST, Boolean.valueOf(false)));
         this.shapesCache = ImmutableMap.copyOf(this.stateDefinition.getPossibleStates().stream().collect(Collectors.toMap(Function.identity(), IvyBlock::calculateShape)));
+    }
+
+   @Override
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+        entity.makeStuckInBlock(state, new Vec3(0.92D, (double)0.92D, 0.92D));
     }
 
     @Override

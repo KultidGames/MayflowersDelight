@@ -83,7 +83,7 @@ public class DryingTableBlock extends BaseEntityBlock{
                                  Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (!pLevel.isClientSide()) {
             BlockEntity entity = pLevel.getBlockEntity(pPos);
-            if(entity instanceof DryingTableBlockEntity) {
+            if(entity instanceof DryingTableBlockEntity && pPlayer.isCrouching()) {
                 NetworkHooks.openScreen(((ServerPlayer)pPlayer), (DryingTableBlockEntity)entity, pPos);
             } else {
                 throw new IllegalStateException("Our Container provider is missing!");

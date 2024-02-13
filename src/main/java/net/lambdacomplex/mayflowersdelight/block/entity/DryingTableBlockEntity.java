@@ -1,6 +1,8 @@
 package net.lambdacomplex.mayflowersdelight.block.entity;
 
 import net.lambdacomplex.mayflowersdelight.item.ModItems;
+import net.lambdacomplex.mayflowersdelight.networking.ModMessages;
+import net.lambdacomplex.mayflowersdelight.networking.packet.ItemStackSyncS2CPacket;
 import net.lambdacomplex.mayflowersdelight.screen.DryingTableMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -28,10 +30,15 @@ import org.jetbrains.annotations.Nullable;
 
 public class DryingTableBlockEntity extends BlockEntity implements MenuProvider {
 
+
+
     private final ItemStackHandler itemHandler = new ItemStackHandler(2){
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
+            if(!level.isClientSide()) {
+                ModMessages.sendToClients(new ItemStackSyncS2CPacket(this, worldPosition));
+            }
         }
     };
 
@@ -39,7 +46,7 @@ public class DryingTableBlockEntity extends BlockEntity implements MenuProvider 
 
     protected final ContainerData data;
     private int progress = 0;
-    private int maxProgress = 50; //Change me for length of crafting
+    private int maxProgress = 2400; //Change me for length of crafting
 
     public DryingTableBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.DRYING_TABLE.get(), pos, state);
@@ -78,6 +85,27 @@ public class DryingTableBlockEntity extends BlockEntity implements MenuProvider 
     public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
         return new DryingTableMenu(id, inventory, this, this.data);
     }
+
+    //RENDERER CLASS
+
+    public ItemStack getRenderStack() {
+        ItemStack stack;
+
+        if(!itemHandler.getStackInSlot(1).isEmpty()) {
+            stack = itemHandler.getStackInSlot(1);
+        } else {
+            stack = itemHandler.getStackInSlot(0);
+        }
+
+        return stack;
+    }
+
+    public void setHandler(ItemStackHandler itemStackHandler) {
+        for (int i = 0; i < itemStackHandler.getSlots(); i++) {
+            itemHandler.setStackInSlot(i, itemStackHandler.getStackInSlot(i));
+        }
+    }
+
 
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
@@ -128,30 +156,30 @@ public class DryingTableBlockEntity extends BlockEntity implements MenuProvider 
         if (level.isClientSide()) {
             return;
         }
-        // Debug: Check if the tick method is being called.
-        System.out.println("Tick called for DryingTableBlockEntity at " + pos);
 
-        if (hasRecipe(pEntity)) {
-            // Debug: Check if the recipe is detected.
-            System.out.println("Recipe detected, progressing. Current progress: " + pEntity.progress);
+        // Adjust maxProgress for two real-life minutes
+        pEntity.maxProgress = 2400; // Two real-life minutes in ticks
 
+        boolean isDaytime = level.getDayTime() % 24000 < 12000; // Check if it's daytime
+        boolean isDirectlyUnderSky = level.canSeeSky(pos); // Check if the block is directly under the sky
+        boolean isNotRaining = !level.isRaining(); // Check if it's not raining
+
+        if (hasRecipe(pEntity) && isDaytime && isDirectlyUnderSky && isNotRaining) {
             pEntity.progress++;
             setChanged(level, pos, state);
 
             if (pEntity.progress >= pEntity.maxProgress) {
-                // Debug: Check if crafting is triggered.
-                System.out.println("Crafting triggered.");
                 craftItem(pEntity);
             }
         } else {
             if (pEntity.progress > 0) {
-                // Debug: Check if the progress is reset when it should not.
-                System.out.println("Progress reset unexpectedly.");
+                // Optional: Reset progress if conditions are not met
+             //   pEntity.resetProgress();
+                setChanged(level, pos, state);
             }
-            pEntity.resetProgress();
-            setChanged(level, pos, state);
         }
     }
+
 
     private void resetProgress() {
         this.progress = 0;
@@ -159,27 +187,29 @@ public class DryingTableBlockEntity extends BlockEntity implements MenuProvider 
 
     private static void craftItem(DryingTableBlockEntity pEntity) {
         if (hasRecipe(pEntity)) {
-            // Debug: Log the state before crafting.
-            System.out.println("Crafting item. Current output before crafting: " + pEntity.itemHandler.getStackInSlot(1).getCount());
+
 
             pEntity.itemHandler.extractItem(0, 1, false);
 
             ItemStack outputStack = pEntity.itemHandler.getStackInSlot(1);
-            if (!outputStack.isEmpty()) {
-                outputStack.grow(1);
+
+
+            if (!outputStack.isEmpty()) { //could be this line???
+                outputStack.grow(1); // Grow the stack by one
+
             } else {
                 pEntity.itemHandler.setStackInSlot(1, new ItemStack(Items.APPLE, 1));
+
             }
 
-            // Debug: Log the state after crafting.
-            System.out.println("Crafting completed. New output count: " + pEntity.itemHandler.getStackInSlot(1).getCount());
+
 
             pEntity.resetProgress();
         } else {
-            // Debug: If crafting fails due to recipe check
-            System.out.println("Crafting failed. Recipe check did not pass.");
+
         }
     }
+
 
 
 
@@ -190,20 +220,19 @@ public class DryingTableBlockEntity extends BlockEntity implements MenuProvider 
         }
 
         boolean hasCraftableItemInFirstSlot = entity.itemHandler.getStackInSlot(0).getItem() == ModItems.BARLEY.get();
-        System.out.println("Checking recipe conditions.");
+
         return hasCraftableItemInFirstSlot && canInsertAmountIntoOutputSlot(inventory) &&
-                canInsertItemIntoOutputSlot(inventory, new ItemStack(ModItems.LOGO.get(), 1));
+                canInsertItemIntoOutputSlot(inventory, new ItemStack(Items.APPLE, 1));
     }
 
     private static boolean canInsertItemIntoOutputSlot(SimpleContainer inventory, ItemStack stack) {
-        return inventory.getItem(1).getItem() == stack.getItem() || inventory.getItem(1).isEmpty();
+        boolean canInsert = inventory.getItem(1).getItem() == stack.getItem() || inventory.getItem(1).isEmpty();
+        return canInsert;
     }
 
     private static boolean canInsertAmountIntoOutputSlot(SimpleContainer inventory) {
-        return inventory.getItem(1).getMaxStackSize() > inventory.getItem(1).getCount();
+        boolean canInsert = inventory.getItem(1).getMaxStackSize() > inventory.getItem(1).getCount();
+        return canInsert;
     }
-
-
-
 
 }

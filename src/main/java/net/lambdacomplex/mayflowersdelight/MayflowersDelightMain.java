@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import net.lambdacomplex.mayflowersdelight.block.ModBlocks;
 import net.lambdacomplex.mayflowersdelight.block.entity.ModBlockEntities;
 import net.lambdacomplex.mayflowersdelight.item.ModItems;
+import net.lambdacomplex.mayflowersdelight.networking.ModMessages;
 import net.lambdacomplex.mayflowersdelight.screen.DryingTableScreen;
 import net.lambdacomplex.mayflowersdelight.screen.ModMenuTypes;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -28,6 +29,8 @@ public class MayflowersDelightMain {
 
     public MayflowersDelightMain() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        ModMessages.register();
 
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
