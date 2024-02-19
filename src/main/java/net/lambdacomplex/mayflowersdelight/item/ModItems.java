@@ -3,6 +3,7 @@ package net.lambdacomplex.mayflowersdelight.item;
 import net.lambdacomplex.mayflowersdelight.MayflowersDelightMain;
 import net.lambdacomplex.mayflowersdelight.block.ModBlocks;
 import net.lambdacomplex.mayflowersdelight.block.custom.BasicCropBlock;
+import net.lambdacomplex.mayflowersdelight.item.custom.MeadItem;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -37,6 +38,11 @@ public class ModItems {
 
     // Fruit
     public static final RegistryObject<Item> PEAR = registerFoodItem("pear", 2, 2);
+
+    //Alcohol
+    public static final RegistryObject<Item> MEAD = ITEMS.register("mead", () -> new MeadItem(new Item.Properties().tab(ModCreativeTab.MOD_TAB).food(new FoodProperties.Builder().nutrition(1).saturationMod(1.0F).build())));
+
+
 
     // Generic method for registering basic items
     private static RegistryObject<Item> registerBasicItem(String name) {
