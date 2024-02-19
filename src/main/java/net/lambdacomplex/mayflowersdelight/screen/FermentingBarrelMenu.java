@@ -18,7 +18,7 @@ public class FermentingBarrelMenu extends AbstractContainerMenu {
     public final ContainerData data;
 
     public FermentingBarrelMenu(int id, Inventory inv, FriendlyByteBuf extraData){
-        this(id, inv, inv.player.level.getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(2));
+        this(id, inv, inv.player.level.getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(5));
     }
 
     public FermentingBarrelMenu(int id, Inventory inv, BlockEntity entity, ContainerData data){
@@ -49,7 +49,7 @@ public class FermentingBarrelMenu extends AbstractContainerMenu {
     public int getScaledProgress() {
         int progress = this.data.get(0);
         int maxProgress = this.data.get(1);  // Max Progress
-        int progressArrowSize = 29; // This is the height in pixels of your arrow
+        int progressArrowSize = 35; // This is the height in pixels of your arrow
 
         return maxProgress != 0 && progress != 0 ? progress * progressArrowSize / maxProgress : 0;
     }

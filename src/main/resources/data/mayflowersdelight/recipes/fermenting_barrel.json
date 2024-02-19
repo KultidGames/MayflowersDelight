@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#i#",
+    "_B_",
+    "#i#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:gold_nugget"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "_": {
+      "tag": "minecraft:wooden_slabs"
+    },
+    "B": {
+      "item": "minecraft:barrel"
+    }
+  },
+  "result": {
+    "item": "mayflowersdelight:fermenting_barrel",
+    "count": 1
+  }
+}

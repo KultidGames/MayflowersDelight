@@ -2,6 +2,7 @@ package net.lambdacomplex.mayflowersdelight.networking.packet;
 
 
 import net.lambdacomplex.mayflowersdelight.block.entity.DryingTableBlockEntity;
+import net.lambdacomplex.mayflowersdelight.block.entity.FermentingBarrelBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;

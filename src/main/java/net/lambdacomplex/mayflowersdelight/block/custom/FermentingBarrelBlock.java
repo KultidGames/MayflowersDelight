@@ -23,13 +23,13 @@ import org.jetbrains.annotations.Nullable;
 
 public class FermentingBarrelBlock extends BaseEntityBlock{
 
-  // public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+   public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public FermentingBarrelBlock(Properties prop) {
 
         super(prop);
     }
 
-   /* @Override
+    @Override
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
         return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
     }
@@ -47,7 +47,7 @@ public class FermentingBarrelBlock extends BaseEntityBlock{
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
-    } */
+    }
 
 
 

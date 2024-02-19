@@ -36,11 +36,21 @@ public class FermentingBarrelScreen extends AbstractContainerScreen<FermentingBa
 
     private void renderProgressArrow(PoseStack pPoseStack, int x, int y) {
         if(menu.isCrafting()) {
-            blit(pPoseStack, x + 47, y + 35, 175, 0, 14, menu.getScaledProgress()); //Where it should draw on the screen
-            blit(pPoseStack, x + 83, y + 35, 175, 0, 14, menu.getScaledProgress()); //Where it should draw on the screen
-            blit(pPoseStack, x + 119, y + 35, 175, 0, 14, menu.getScaledProgress()); //Where it should draw on the screen
+            int progressHeight = menu.getScaledProgress();
+
+            // Calculate the starting Y position based on the progress.
+            // Assuming the total height of the progress area is 35 pixels, as indicated in your getScaledProgress method.
+            int totalHeight = 35;
+            int startY = y + 28 + (totalHeight - progressHeight);
+
+            // Adjust blit parameters to start drawing from the calculated startY
+            // and only draw the portion of the arrow equal to the current progress.
+            blit(pPoseStack, x + 47, startY, 175, totalHeight - progressHeight, 14, progressHeight);
+            blit(pPoseStack, x + 83, startY, 175, totalHeight - progressHeight, 14, progressHeight);
+            blit(pPoseStack, x + 119, startY, 175, totalHeight - progressHeight, 14, progressHeight);
         }
     }
+
 
     @Override
     public void render(PoseStack pPoseStack, int mouseX, int mouseY, float delta) {

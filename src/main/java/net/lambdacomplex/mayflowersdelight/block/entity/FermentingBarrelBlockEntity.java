@@ -1,6 +1,6 @@
 package net.lambdacomplex.mayflowersdelight.block.entity;
 
-import net.lambdacomplex.mayflowersdelight.block.ModBlocks;
+import net.lambdacomplex.mayflowersdelight.screen.FermentingBarrelMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -75,7 +75,7 @@ public class FermentingBarrelBlockEntity extends BlockEntity implements MenuProv
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory inv, Player player) {
-        return null;
+        return new FermentingBarrelMenu(id, inv, this, this.data);
     }
 
 
@@ -145,9 +145,9 @@ public class FermentingBarrelBlockEntity extends BlockEntity implements MenuProv
     private static void craftItem(FermentingBarrelBlockEntity pEntity) {
 
         if(hasRecipe(pEntity)) {
-            pEntity.itemHandler.extractItem(1, 1, false);
-            pEntity.itemHandler.setStackInSlot(2, new ItemStack(Items.HONEY_BOTTLE,
-                    pEntity.itemHandler.getStackInSlot(2).getCount() + 1));
+            pEntity.itemHandler.extractItem(0, 1, false);
+            pEntity.itemHandler.setStackInSlot(4, new ItemStack(Items.HONEY_BOTTLE,
+                    pEntity.itemHandler.getStackInSlot(4).getCount() + 1));
 
             pEntity.resetProgress();
         }
@@ -162,15 +162,15 @@ public class FermentingBarrelBlockEntity extends BlockEntity implements MenuProv
         boolean hasRawGemInFirstSlot = entity.itemHandler.getStackInSlot(0).getItem() == Items.BUCKET;
 
         return hasRawGemInFirstSlot && canInsertAmountIntoOutputSlot(inventory) &&
-                canInsertItemIntoOutputSlot(inventory, new ItemStack(Items.HONEY_BOTTLE, 0));
+                canInsertItemIntoOutputSlot(inventory, new ItemStack(Items.HONEY_BOTTLE, 1));
     }
 
     private static boolean canInsertItemIntoOutputSlot(SimpleContainer inventory, ItemStack stack) {
-        return inventory.getItem(5).getItem() == stack.getItem() || inventory.getItem(5).isEmpty();
+        return inventory.getItem(4).getItem() == stack.getItem() || inventory.getItem(4).isEmpty();
     }
 
     private static boolean canInsertAmountIntoOutputSlot(SimpleContainer inventory) {
-        return inventory.getItem(2).getMaxStackSize() > inventory.getItem(2).getCount();
+        return inventory.getItem(4).getMaxStackSize() > inventory.getItem(4).getCount();
     }
 
 
