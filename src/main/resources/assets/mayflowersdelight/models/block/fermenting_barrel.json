@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "mayflowersdelight:block/fermenting_barrel_top",
+    "side": "mayflowersdelight:block/fermenting_barrel_side"
+  }
+}
