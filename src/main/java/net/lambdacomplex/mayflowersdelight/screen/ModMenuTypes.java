@@ -17,6 +17,9 @@ public class ModMenuTypes {
     public static final RegistryObject<MenuType<DryingTableMenu>> DRYING_TABLE_MENU =
             registerMenuType(DryingTableMenu::new, "drying_table_menu");
 
+    public static final RegistryObject<MenuType<FermentingBarrelMenu>> FERMENTING_BARREL_MENU =
+            registerMenuType(FermentingBarrelMenu::new, "fermenting_barrel_menu");
+
     private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenuType(IContainerFactory<T> factory,
                                                                                                   String name) {
         return MENUS.register(name, () -> IForgeMenuType.create(factory));

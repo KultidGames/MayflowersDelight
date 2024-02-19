@@ -5,7 +5,9 @@ import net.lambdacomplex.mayflowersdelight.block.ModBlocks;
 import net.lambdacomplex.mayflowersdelight.block.entity.ModBlockEntities;
 import net.lambdacomplex.mayflowersdelight.item.ModItems;
 import net.lambdacomplex.mayflowersdelight.networking.ModMessages;
+import net.lambdacomplex.mayflowersdelight.recipe.ModRecipes;
 import net.lambdacomplex.mayflowersdelight.screen.DryingTableScreen;
+import net.lambdacomplex.mayflowersdelight.screen.FermentingBarrelScreen;
 import net.lambdacomplex.mayflowersdelight.screen.ModMenuTypes;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -37,6 +39,7 @@ public class MayflowersDelightMain {
         ModBlockEntities.register(modEventBus);
         ModMenuTypes.register(modEventBus);
 
+        ModRecipes.register(modEventBus);
 
 
         modEventBus.addListener(this::commonSetup);
@@ -60,6 +63,7 @@ public class MayflowersDelightMain {
         public static void onClientSetup(FMLClientSetupEvent event)
         {
             MenuScreens.register(ModMenuTypes.DRYING_TABLE_MENU.get(), DryingTableScreen::new);
+            MenuScreens.register(ModMenuTypes.FERMENTING_BARREL_MENU.get(), FermentingBarrelScreen::new);
         }
     }
 }

@@ -13,6 +13,7 @@ public class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MayflowersDelightMain.MODID);
 
     public static final RegistryObject<BlockEntityType<DryingTableBlockEntity>> DRYING_TABLE = BLOCK_ENTITIES.register("drying_table", () -> BlockEntityType.Builder.of(DryingTableBlockEntity::new, ModBlocks.DRYING_TABLE.get()).build(null));
+    public static final RegistryObject<BlockEntityType<FermentingBarrelBlockEntity>> FERMENTING_BARREL = BLOCK_ENTITIES.register("fermenting_barrel", () -> BlockEntityType.Builder.of(FermentingBarrelBlockEntity::new, ModBlocks.FERMENTING_BARREL.get()).build(null));
 
     public static void register(IEventBus eventBus){
         BLOCK_ENTITIES.register(eventBus);

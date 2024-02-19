@@ -139,6 +139,9 @@ dependencies {
     implementation fg.deobf("curse.maven:farmers-delight-398521:4679318")
     implementation fg.deobf("curse.maven:overweight-farming-591666:4395450")
     implementation fg.deobf("curse.maven:eating-animation-forge-570544:4440455")
+    implementation fg.deobf("curse.maven:jei-238222:4712866")
+    implementation fg.deobf("curse.maven:citadel-331936:4556677") //Citadel needed for Alex's Mobs
+    implementation fg.deobf("curse.maven:alexs-mobs-426558:4159154")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

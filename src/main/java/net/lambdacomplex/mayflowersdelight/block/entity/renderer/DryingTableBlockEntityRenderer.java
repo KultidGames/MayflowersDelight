@@ -18,28 +18,48 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 
 public class DryingTableBlockEntityRenderer implements BlockEntityRenderer<DryingTableBlockEntity> {
-    @Override
-    public void render(DryingTableBlockEntity pBlockEntity, float pPartialTick, PoseStack pPoseStack,
-                       MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
-        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-        ItemStack itemStack = pBlockEntity.getRenderStack();
-        pPoseStack.pushPose();
-        pPoseStack.translate(0.5f, 0.65f, 0.5f);
-        pPoseStack.scale(5.25f, 5.25f, 5.25f);
-        pPoseStack.mulPose(Vector3f.XP.rotationDegrees(90));
+    public DryingTableBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
 
-        switch (pBlockEntity.getBlockState().getValue(DryingTableBlock.FACING)) {
-            case NORTH -> pPoseStack.mulPose(Vector3f.ZP.rotationDegrees(0));
-            case EAST -> pPoseStack.mulPose(Vector3f.ZP.rotationDegrees(90));
-            case SOUTH -> pPoseStack.mulPose(Vector3f.ZP.rotationDegrees(180));
-            case WEST -> pPoseStack.mulPose(Vector3f.ZP.rotationDegrees(270));
+    }
+    @Override
+    public void render(DryingTableBlockEntity blockEntity, float partialTick, PoseStack poseStack,
+                       MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+        ItemStack inputStack = blockEntity.getRenderInputStack(); // Assuming this gets the input stack
+        int inputCount = inputStack.getCount();
+
+        for (int i = 0; i < Math.min(inputCount, 7); i++) {
+            poseStack.pushPose();
+            // Adjustments for stacking and positioning
+            poseStack.translate(0.5f, 0.76f + i * 0.04f, 0.2f);
+            poseStack.mulPose(Vector3f.XP.rotationDegrees(-90));
+            // Slightly rotate each item in the stack
+            poseStack.mulPose(Vector3f.ZP.rotationDegrees(i * 8));
+            // Scale the item
+            poseStack.scale(0.55f, 0.55f, 0.55f);
+            // Render the item
+            itemRenderer.renderStatic(inputStack, ItemTransforms.TransformType.GUI, packedLight, OverlayTexture.NO_OVERLAY, poseStack, bufferSource, i);
+            poseStack.popPose();
         }
 
-        itemRenderer.renderStatic(itemStack, ItemTransforms.TransformType.GUI, getLightLevel(pBlockEntity.getLevel(),
-                        pBlockEntity.getBlockPos()),
-                OverlayTexture.NO_OVERLAY, pPoseStack, pBufferSource, 1);
-        pPoseStack.popPose();
+        ItemStack outputStack = blockEntity.getRenderOutputStack(); // Assuming you have a method to get the output stack
+        int outputCount = outputStack.getCount();
+
+        for (int i = 0; i < Math.min(outputCount, 7); i++) {
+            poseStack.pushPose();
+            // Adjustments for stacking and positioning for the output stack
+            poseStack.translate(0.5f, 0.76f + i * 0.04f, 0.8f);
+            poseStack.mulPose(Vector3f.XP.rotationDegrees(-90));
+            // Slightly rotate each item in the output stack
+            poseStack.mulPose(Vector3f.ZP.rotationDegrees(i * 8));
+            // Scale the item
+            poseStack.scale(0.55f, 0.55f, 0.55f);
+            // Render the item
+            itemRenderer.renderStatic(outputStack, ItemTransforms.TransformType.GUI, packedLight, OverlayTexture.NO_OVERLAY, poseStack, bufferSource, i);
+            poseStack.popPose();
+        }
     }
+
 
     private int getLightLevel(Level level, BlockPos pos) {
         int bLight = level.getBrightness(LightLayer.BLOCK, pos);

@@ -1,19 +1,25 @@
 //TODO
 Fix:
--Common Ivy issues when facing=UP
--Common Ivy slows player down, sounds
+-Common Ivy Spreading
 -Make sure DryingTable second slot can't have any inputs
+-Add MaxProgress to JSON recipe for Drying Table, JEI Progress Arrow
+-Drying Table, if have empty hand, take output. If have item, put in input.
+-Reset Progress in Drying Table is item is taken out(?)
 
 Add:
--JSON Recipes for Drying Table
--BlockEntityRenderer for Drying Table
--DryingTable mineable, flammable tags
+-Sided Inventory for Hopper integration Drying Table
+-DryingTable flammable tags
 -Common Ivy tree spawn
 -Wild Garlic Block & spawn
+-Globe in Table
 
 Tweak:
 -Saturation & nutrition values for Foodstuffs
+-EatingAnimation speed
 
 
 Resources:
 https://crafting.thedestruc7i0n.ca/
+
+Model / JSONs Directory:
+net.minecraft:client:extra:1.19.2

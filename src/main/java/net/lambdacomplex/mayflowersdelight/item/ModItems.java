@@ -24,6 +24,7 @@ public class ModItems {
     public static final RegistryObject<Item> LOGO = registerBasicItem("logo");
     public static final RegistryObject<Item> BARLEY = registerBasicItem("barley");
     public static final RegistryObject<Item> CRUSHED_SUGARCANE = registerBasicItem("crushed_sugarcane");
+    public static final RegistryObject<Item> DRIED_TOBACCO = registerBasicItem("dried_tobacco");
 
 
     // Food Items-- Crafting

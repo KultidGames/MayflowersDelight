@@ -3,6 +3,7 @@ package net.lambdacomplex.mayflowersdelight.block.entity;
 import net.lambdacomplex.mayflowersdelight.item.ModItems;
 import net.lambdacomplex.mayflowersdelight.networking.ModMessages;
 import net.lambdacomplex.mayflowersdelight.networking.packet.ItemStackSyncS2CPacket;
+import net.lambdacomplex.mayflowersdelight.recipe.DryingTableRecipe;
 import net.lambdacomplex.mayflowersdelight.screen.DryingTableMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -28,6 +29,8 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 public class DryingTableBlockEntity extends BlockEntity implements MenuProvider {
 
 
@@ -36,6 +39,7 @@ public class DryingTableBlockEntity extends BlockEntity implements MenuProvider 
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
+            assert level != null; //Delete if not work
             if(!level.isClientSide()) {
                 ModMessages.sendToClients(new ItemStackSyncS2CPacket(this, worldPosition));
             }
@@ -88,13 +92,25 @@ public class DryingTableBlockEntity extends BlockEntity implements MenuProvider 
 
     //RENDERER CLASS
 
-    public ItemStack getRenderStack() {
+    public ItemStack getRenderInputStack() {
         ItemStack stack;
 
-        if(!itemHandler.getStackInSlot(1).isEmpty()) {
-            stack = itemHandler.getStackInSlot(1);
+        if(!itemHandler.getStackInSlot(0).isEmpty()) {
+            stack = itemHandler.getStackInSlot(0);
         } else {
             stack = itemHandler.getStackInSlot(0);
+        }
+
+        return stack;
+    }
+
+    public ItemStack getRenderOutputStack() {
+        ItemStack stack;
+
+        if(!itemHandler.getStackInSlot(0).isEmpty()) {
+            stack = itemHandler.getStackInSlot(0);
+        } else {
+            stack = itemHandler.getStackInSlot(1);
         }
 
         return stack;
@@ -186,43 +202,44 @@ public class DryingTableBlockEntity extends BlockEntity implements MenuProvider 
     }
 
     private static void craftItem(DryingTableBlockEntity pEntity) {
+
+        Level lev = pEntity.level;
+        SimpleContainer inventory = new SimpleContainer(pEntity.itemHandler.getSlots());
+        for (int i = 0; i < pEntity.itemHandler.getSlots(); i++) {
+            inventory.setItem(i, pEntity.itemHandler.getStackInSlot(i));
+        }
+
+
+        Optional<DryingTableRecipe> rec = lev.getRecipeManager().getRecipeFor(DryingTableRecipe.Type.INSTANCE, inventory, lev);
+
         if (hasRecipe(pEntity)) {
-
-
             pEntity.itemHandler.extractItem(0, 1, false);
-
             ItemStack outputStack = pEntity.itemHandler.getStackInSlot(1);
-
-
             if (!outputStack.isEmpty()) { //could be this line???
                 outputStack.grow(1); // Grow the stack by one
-
             } else {
-                pEntity.itemHandler.setStackInSlot(1, new ItemStack(Items.APPLE, 1));
-
+                pEntity.itemHandler.setStackInSlot(1, new ItemStack(rec.get().getResultItem().getItem(), 1));
             }
-
-
-
             pEntity.resetProgress();
-        } else {
-
-        }
+        } else {}
     }
 
 
 
 
     private static boolean hasRecipe(DryingTableBlockEntity entity) {
+        Level lev = entity.level;
         SimpleContainer inventory = new SimpleContainer(entity.itemHandler.getSlots());
         for (int i = 0; i < entity.itemHandler.getSlots(); i++) {
             inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
         }
 
-        boolean hasCraftableItemInFirstSlot = entity.itemHandler.getStackInSlot(0).getItem() == ModItems.BARLEY.get();
 
-        return hasCraftableItemInFirstSlot && canInsertAmountIntoOutputSlot(inventory) &&
-                canInsertItemIntoOutputSlot(inventory, new ItemStack(Items.APPLE, 1));
+        Optional<DryingTableRecipe> rec = lev.getRecipeManager().getRecipeFor(DryingTableRecipe.Type.INSTANCE, inventory, lev);
+       // boolean hasCraftableItemInFirstSlot = entity.itemHandler.getStackInSlot(0).getItem() == ModItems.BARLEY.get();
+
+        return rec.isPresent() && canInsertAmountIntoOutputSlot(inventory) &&
+                canInsertItemIntoOutputSlot(inventory, rec.get().getResultItem());
     }
 
     private static boolean canInsertItemIntoOutputSlot(SimpleContainer inventory, ItemStack stack) {

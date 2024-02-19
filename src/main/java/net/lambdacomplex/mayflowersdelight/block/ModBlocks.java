@@ -3,6 +3,7 @@ package net.lambdacomplex.mayflowersdelight.block;
 import net.lambdacomplex.mayflowersdelight.MayflowersDelightMain;
 import net.lambdacomplex.mayflowersdelight.block.custom.BasicCropBlock;
 import net.lambdacomplex.mayflowersdelight.block.custom.DryingTableBlock;
+import net.lambdacomplex.mayflowersdelight.block.custom.FermentingBarrelBlock;
 import net.lambdacomplex.mayflowersdelight.block.custom.IvyBlock;
 import net.lambdacomplex.mayflowersdelight.item.ModCreativeTab;
 import net.lambdacomplex.mayflowersdelight.item.ModItems;
@@ -28,6 +29,7 @@ public class ModBlocks {
     public static final RegistryObject<Block> TEST_BLOCK = registerBlock("testblock", () -> new Block(BlockBehaviour.Properties.of(Material.CACTUS)), ModCreativeTab.MOD_TAB, true);
     public static final RegistryObject<Block> COMMON_IVY = registerBlock("common_ivy", () -> new IvyBlock(BlockBehaviour.Properties.of(Material.REPLACEABLE_PLANT).noCollission().noOcclusion().randomTicks().strength(0.2f).sound(SoundType.VINE)), ModCreativeTab.MOD_TAB, true);
     public static final RegistryObject<Block> DRYING_TABLE = registerBlock("drying_table", () -> new DryingTableBlock(BlockBehaviour.Properties.copy(Blocks.BEEHIVE)), ModCreativeTab.MOD_TAB, true);
+    public static final RegistryObject<Block> FERMENTING_BARREL = registerBlock("fermenting_barrel", () -> new FermentingBarrelBlock(BlockBehaviour.Properties.copy(Blocks.BARREL)), ModCreativeTab.MOD_TAB, true);
 
     //Vegetables
     public static final RegistryObject<Block> GARLIC_CROP = registerBlock("garlic_crop", () -> new BasicCropBlock(BlockBehaviour.Properties.copy(Blocks.BEETROOTS), 6), ModCreativeTab.MOD_TAB, false);

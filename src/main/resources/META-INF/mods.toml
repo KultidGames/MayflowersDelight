@@ -79,3 +79,21 @@ description='''${mod_description}'''
    versionRange = "[1.19.2-3.2.0-forge,)"
    ordering = "AFTER"
    side = "BOTH"
+[[dependencies.mayflowersdelight]]
+   modId = "jei"
+   mandatory = false
+   versionRange = "[1.19.2-forge-11.6.0.1018,)"
+   ordering = "AFTER"
+   side = "BOTH"
+[[dependencies.mayflowersdelight]]
+   modId = "citadel"
+   mandatory = false
+   versionRange = "[2.1.4,)"
+   ordering = "AFTER"
+   side = "BOTH"
+[[dependencies.mayflowersdelight]]
+   modId = "alexmobs"
+   mandatory = false
+   versionRange = "[1.21.1,)"
+   ordering = "AFTER"
+   side = "BOTH"

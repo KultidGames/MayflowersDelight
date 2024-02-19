@@ -6,9 +6,11 @@
   "item.mayflowersdelight.raw_chevaline": "Chevaline",
   "item.mayflowersdelight.pear": "Pear",
   "item.mayflowersdelight.barley": "Barley",
+  "item.mayflowersdelight.dried_tobacco": "Dried Tobacco",
   "item.mayflowersdelight.crushed_sugarcane": "Crushed Sugarcane",
   "block.mayflowersdelight.testblock": "Test Block",
   "block.mayflowersdelight.common_ivy": "Common Ivy",
   "block.mayflowersdelight.garlic_crop": "Garlic Crop",
-  "block.mayflowersdelight.drying_table": "Drying Table"
+  "block.mayflowersdelight.drying_table": "Drying Table",
+  "block.mayflowersdelight.fermenting_barrel": "Fermenting Barrel"
 }

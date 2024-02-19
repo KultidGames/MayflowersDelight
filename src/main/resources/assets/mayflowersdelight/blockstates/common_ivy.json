@@ -11,36 +11,11 @@
     },
     {
       "apply": {
-        "model": "mayflowersdelight:block/common_ivy"
-      },
-      "when": {
-        "east": "false",
-        "north": "false",
-        "south": "false",
-        "up": "false",
-        "west": "false"
-      }
-    },
-    {
-      "apply": {
         "model": "mayflowersdelight:block/common_ivy",
         "y": 180
       },
       "when": {
         "east": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "mayflowersdelight:block/common_ivy",
-        "y": 180
-      },
-      "when": {
-        "east": "false",
-        "north": "false",
-        "south": "false",
-        "up": "false",
-        "west": "false"
       }
     },
     {
@@ -55,19 +30,6 @@
     {
       "apply": {
         "model": "mayflowersdelight:block/common_ivy",
-        "y": 270
-      },
-      "when": {
-        "east": "false",
-        "north": "false",
-        "south": "false",
-        "up": "false",
-        "west": "false"
-      }
-    },
-    {
-      "apply": {
-        "model": "mayflowersdelight:block/common_ivy",
         "y": 0
       },
       "when": {
@@ -76,37 +38,11 @@
     },
     {
       "apply": {
-        "model": "mayflowersdelight:block/common_ivy",
-        "y": 0
-      },
-      "when": {
-        "east": "false",
-        "north": "false",
-        "south": "false",
-        "up": "false",
-        "west": "false"
-      }
-    },
-    {
-      "apply": {
-        "model": "mayflowersdelight:block/common_ivy",
-        "x": 90
+        "model": "mayflowersdelight:block/common_ivy_down",
+        "y": 90
       },
       "when": {
         "up": "true"
-      }
-    },
-    {
-      "apply": {
-        "model": "mayflowersdelight:block/common_ivy",
-        "x": 270
-      },
-      "when": {
-        "east": "false",
-        "north": "false",
-        "south": "false",
-        "up": "false",
-        "west": "false"
       }
     }
   ]

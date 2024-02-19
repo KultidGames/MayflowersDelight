@@ -1,6 +1,6 @@
 package net.lambdacomplex.mayflowersdelight.block.custom;
 
-import net.lambdacomplex.mayflowersdelight.block.entity.DryingTableBlockEntity;
+import net.lambdacomplex.mayflowersdelight.block.entity.FermentingBarrelBlockEntity;
 import net.lambdacomplex.mayflowersdelight.block.entity.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -8,7 +8,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -19,26 +18,18 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
-public class DryingTableBlock extends BaseEntityBlock{
+public class FermentingBarrelBlock extends BaseEntityBlock{
 
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    protected static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D);
-    public DryingTableBlock(Properties prop) {
-        
+  // public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public FermentingBarrelBlock(Properties prop) {
+
         super(prop);
     }
 
-    @Override
-    public VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
-        return SHAPE;
-    }
-
-    @Override
+   /* @Override
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
         return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
     }
@@ -56,7 +47,7 @@ public class DryingTableBlock extends BaseEntityBlock{
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
-    }
+    } */
 
 
 
@@ -71,8 +62,8 @@ public class DryingTableBlock extends BaseEntityBlock{
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving){
         if(pState.getBlock() != pNewState.getBlock()){
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof DryingTableBlockEntity) {
-                ((DryingTableBlockEntity) blockEntity).drops();
+            if (blockEntity instanceof FermentingBarrelBlockEntity) {
+                ((FermentingBarrelBlockEntity) blockEntity).drops();
             }
         }
         super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
@@ -83,8 +74,8 @@ public class DryingTableBlock extends BaseEntityBlock{
                                  Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (!pLevel.isClientSide()) {
             BlockEntity entity = pLevel.getBlockEntity(pPos);
-            if(entity instanceof DryingTableBlockEntity) {
-                NetworkHooks.openScreen(((ServerPlayer)pPlayer), (DryingTableBlockEntity)entity, pPos);
+            if(entity instanceof FermentingBarrelBlockEntity) {
+                NetworkHooks.openScreen(((ServerPlayer)pPlayer), (FermentingBarrelBlockEntity)entity, pPos);
             } else {
                 throw new IllegalStateException("Our Container provider is missing!");
             }
@@ -96,14 +87,14 @@ public class DryingTableBlock extends BaseEntityBlock{
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new DryingTableBlockEntity(pos, state);
+        return new FermentingBarrelBlockEntity(pos, state);
     }
 
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
                                                                   BlockEntityType<T> type) {
-        return createTickerHelper(type, ModBlockEntities.DRYING_TABLE.get(),
-                DryingTableBlockEntity::tick);
+        return createTickerHelper(type, ModBlockEntities.FERMENTING_BARREL.get(),
+                FermentingBarrelBlockEntity::tick);
     }
 }
