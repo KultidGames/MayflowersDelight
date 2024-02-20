@@ -5,7 +5,6 @@ Fix:
 -Add MaxProgress to JSON recipe for Drying Table, JEI Progress Arrow
 -Drying Table, if have empty hand, take output. If have item, put in input.
 -Reset Progress in Drying Table is item is taken out(?)
--Get rid of "Inventory" on Fermenting Barrel Screen
 -Make Fermenting Barrel produce noises, bubble particles
 -Fix Garlic Age 7, should not exist.
 
@@ -15,9 +14,6 @@ Add:
 -Common Ivy tree spawn
 -Wild Garlic Block & spawn
 -Globe in Table
-
--Make Mead item that acts like SuspiciousStew
--Make Mead item be crafted using Fermenting Barrel
 
 Tweak:
 -Saturation & nutrition values for Foodstuffs

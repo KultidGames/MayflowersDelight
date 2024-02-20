@@ -66,7 +66,7 @@ public class IvyBlock extends Block implements IForgeShearable {
         this.shapesCache = ImmutableMap.copyOf(this.stateDefinition.getPossibleStates().stream().collect(Collectors.toMap(Function.identity(), IvyBlock::calculateShape)));
     }
 
-   @Override
+    @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         entity.makeStuckInBlock(state, new Vec3(0.92D, (double)0.92D, 0.92D));
     }
@@ -197,8 +197,7 @@ public class IvyBlock extends Block implements IForgeShearable {
                 if (this.canSpread(level, pos)) {
                     BlockPos blockpos4 = pos.relative(direction);
                     BlockState blockstate4 = level.getBlockState(blockpos4);
-                    // Check if the block is air and not glass before spreading
-                    if (blockstate4.isAir() && !blockstate4.is(Tags.Blocks.GLASS) && !blockstate4.is(Tags.Blocks.GLASS_PANES)) {
+                    if (blockstate4.isAir()) {
                         Direction direction3 = direction.getClockWise();
                         Direction direction4 = direction.getCounterClockWise();
                         boolean flag = state.getValue(getPropertyForFace(direction3));
@@ -222,16 +221,80 @@ public class IvyBlock extends Block implements IForgeShearable {
                     } else if (isAcceptableNeighbour(level, blockpos4, direction)) {
                         level.setBlock(pos, state.setValue(getPropertyForFace(direction), Boolean.valueOf(true)), 2);
                     }
+
                 }
             } else {
-                // Existing logic for when direction is UP or when the ivy is spreading downwards
-                // No changes needed here for the glass block condition
+                if (direction == Direction.UP && pos.getY() < level.getMaxBuildHeight() - 1) {
+                    if (this.canSupportAtFace(level, pos, direction)) {
+                        level.setBlock(pos, state.setValue(UP, Boolean.valueOf(true)), 2);
+                        return;
+                    }
+
+                    if (level.isEmptyBlock(blockpos)) {
+                        if (!this.canSpread(level, pos)) {
+                            return;
+                        }
+
+                        BlockState blockstate3 = state;
+
+                        for(Direction direction2 : Direction.Plane.HORIZONTAL) {
+                            if (random.nextBoolean() || !isAcceptableNeighbour(level, blockpos.relative(direction2), direction2)) {
+                                blockstate3 = blockstate3.setValue(getPropertyForFace(direction2), Boolean.valueOf(false));
+                            }
+                        }
+
+                        if (this.hasHorizontalConnection(blockstate3)) {
+                            level.setBlock(blockpos, blockstate3, 2);
+                        }
+
+                        return;
+                    }
+                }
+
+                if (pos.getY() > level.getMinBuildHeight()) {
+                    BlockPos blockpos1 = pos.below();
+                    BlockState blockstate = level.getBlockState(blockpos1);
+                    if (blockstate.isAir() || blockstate.is(this)) {
+                        BlockState blockstate1 = blockstate.isAir() ? this.defaultBlockState() : blockstate;
+                        BlockState blockstate2 = this.copyRandomFaces(state, blockstate1, random);
+                        if (blockstate1 != blockstate2 && this.hasHorizontalConnection(blockstate2)) {
+                            level.setBlock(blockpos1, blockstate2, 2);
+                        }
+                    }
+                }
+
             }
         }
 
-        // The second part of the method seems to handle mossy conversions, unrelated to the glass block issue
-    }
 
+        if (level.random.nextInt(4) == 0 && level.isAreaLoaded(pos, 4)) { // Forge: check area to prevent loading unloaded chunks
+            // Iterate over all horizontal directions since your logic seems intended for horizontal facings
+            for (Direction direction : Direction.values()) {
+                // Ensure the direction is valid and the property exists before accessing it
+                BooleanProperty directionProperty = PROPERTY_BY_DIRECTION.get(direction);
+                if (directionProperty != null && state.getValue(directionProperty)) {
+                    BlockPos targetPos = pos.relative(direction);
+                    BlockState targetState = level.getBlockState(targetPos);
+                    Block targetBlock = targetState.getBlock();
+
+                    ResourceLocation blockResourceLocation = ForgeRegistries.BLOCKS.getKey(targetBlock);
+                    if (blockResourceLocation != null) {
+                        String mossyBlockName = "mossy_" + blockResourceLocation.getPath();
+                        ResourceLocation mossyBlockResourceLocation = new ResourceLocation(blockResourceLocation.getNamespace(), mossyBlockName);
+
+                        Block mossyVariant = ForgeRegistries.BLOCKS.getValue(mossyBlockResourceLocation);
+                        if (mossyVariant != null && mossyVariant != Blocks.AIR) {
+                            if (random.nextInt(4) == 0) {
+                                level.setBlock(targetPos, mossyVariant.defaultBlockState(), 3);
+                            }
+                        }
+                    }
+
+                    // Since you want to change only one block per tick, exit the loop after the first change
+                    break;
+                }
+            }
+        }    }
 
     private BlockState copyRandomFaces(BlockState p_222651_, BlockState p_222652_, RandomSource p_222653_) {
         for(Direction direction : Direction.Plane.HORIZONTAL) {
