@@ -1,5 +1,7 @@
 {
   "variants": {
-    "": { "model":  "mayflowersdelight:block/fermenting_barrel"}
+    "axis=x": { "model": "mayflowersdelight:block/fermenting_barrel_horizontal", "x": 90, "y": 90 },
+    "axis=y": { "model": "mayflowersdelight:block/fermenting_barrel" },
+    "axis=z": { "model": "mayflowersdelight:block/fermenting_barrel_horizontal", "x": 90 }
   }
 }

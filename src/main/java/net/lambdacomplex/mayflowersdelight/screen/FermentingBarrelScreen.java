@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.level.block.Blocks;
 
 public class FermentingBarrelScreen extends AbstractContainerScreen<FermentingBarrelMenu> {
 
@@ -36,26 +37,50 @@ public class FermentingBarrelScreen extends AbstractContainerScreen<FermentingBa
 
     private void renderProgressArrow(PoseStack pPoseStack, int x, int y) {
         if(menu.isCrafting()) {
-            int progressHeight = menu.getScaledProgress();
+            long ticks = (System.currentTimeMillis() / 50) % 40; // Loop every 2 seconds (40 ticks).
+            float progress = (float)ticks / 40; // Normalize progress to [0,1].
+            int progressHeight = (int)(35 * progress); // Scale progress to the height of the arrow.
 
-            // Calculate the starting Y position based on the progress.
-            // Assuming the total height of the progress area is 35 pixels, as indicated in your getScaledProgress method.
-            int totalHeight = 35;
-            int startY = y + 28 + (totalHeight - progressHeight);
+            // Calculate startY to start drawing from the bottom.
+            int startY = y + 28 + (35 - progressHeight);
 
-            // Adjust blit parameters to start drawing from the calculated startY
-            // and only draw the portion of the arrow equal to the current progress.
-            blit(pPoseStack, x + 47, startY, 175, totalHeight - progressHeight, 14, progressHeight);
-            blit(pPoseStack, x + 83, startY, 175, totalHeight - progressHeight, 14, progressHeight);
-            blit(pPoseStack, x + 119, startY, 175, totalHeight - progressHeight, 14, progressHeight);
+            // Draw the progress arrow from bottom to top by adjusting the texture Y offset and the height.
+            blit(pPoseStack, x + 47, startY, 175, 35 - progressHeight, 14, progressHeight);
+            blit(pPoseStack, x + 83, startY, 175, 35 - progressHeight, 14, progressHeight);
+            blit(pPoseStack, x + 119, startY, 175, 35 - progressHeight, 14, progressHeight);
         }
     }
 
 
+
+    @Override
+    protected void renderLabels(PoseStack pPoseStack, int mouseX, int mouseY) {
+        // Manually draw the container name to keep it while not drawing the "Inventory" text
+        this.font.draw(pPoseStack, this.title, (float)(this.imageWidth / 2 - this.font.width(this.title) / 2), 6.0F, 4210752);
+    }
+
+    private void drawMaxProgressTime(PoseStack pPoseStack) {
+        int currentProgress = this.menu.getProgress();
+        int maxProgressTicks = this.menu.getMaxProgress();
+        int remainingTicks = maxProgressTicks - currentProgress;
+        String timeString = convertTicksToTimeString(remainingTicks);
+        int x = this.leftPos + 142; // Corrected to be GUI-relative
+        int y = this.topPos + 6; // Corrected to be GUI-relative
+        this.font.draw(pPoseStack, timeString, x, y, 0xFF353535);
+    }
+
     @Override
     public void render(PoseStack pPoseStack, int mouseX, int mouseY, float delta) {
-        renderBackground(pPoseStack);
+        this.renderBackground(pPoseStack);
         super.render(pPoseStack, mouseX, mouseY, delta);
-        renderTooltip(pPoseStack, mouseX, mouseY);
+        this.renderTooltip(pPoseStack, mouseX, mouseY);
+        drawMaxProgressTime(pPoseStack);
+    }
+
+    private String convertTicksToTimeString(int ticks) {
+        int seconds = ticks / 20;
+        int minutes = seconds / 60;
+        seconds %= 60;
+        return String.format("%02d:%02d", minutes, seconds);
     }
 }

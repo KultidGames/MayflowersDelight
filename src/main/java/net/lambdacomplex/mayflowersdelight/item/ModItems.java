@@ -2,19 +2,15 @@ package net.lambdacomplex.mayflowersdelight.item;
 
 import net.lambdacomplex.mayflowersdelight.MayflowersDelightMain;
 import net.lambdacomplex.mayflowersdelight.block.ModBlocks;
-import net.lambdacomplex.mayflowersdelight.block.custom.BasicCropBlock;
-import net.lambdacomplex.mayflowersdelight.item.custom.MeadItem;
+import net.lambdacomplex.mayflowersdelight.item.custom.AlcoholicDrink;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.CropBlock;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-
 import java.util.function.Supplier;
 
 public class ModItems {
@@ -40,8 +36,8 @@ public class ModItems {
     public static final RegistryObject<Item> PEAR = registerFoodItem("pear", 2, 2);
 
     //Alcohol
-    public static final RegistryObject<Item> MEAD = ITEMS.register("mead", () -> new MeadItem(new Item.Properties().tab(ModCreativeTab.MOD_TAB).food(new FoodProperties.Builder().nutrition(1).saturationMod(1.0F).build())));
-
+   // public static final RegistryObject<Item> MEAD = ITEMS.register("mead", () -> new MeadItem(new Item.Properties().tab(ModCreativeTab.MOD_TAB).food(new FoodProperties.Builder().nutrition(1).saturationMod(1.0F).build())));
+   public static final RegistryObject<Item> RUM = registerAlcoholicDrink("rum");
 
 
     // Generic method for registering basic items
@@ -54,6 +50,10 @@ public class ModItems {
     // Generic method for registering food items
     private static RegistryObject<Item> registerFoodItem(String name, int nutrition, float saturation) {
         return ITEMS.register(name, () -> new Item(new Item.Properties().tab(ModCreativeTab.MOD_TAB).food(new FoodProperties.Builder().nutrition(nutrition).saturationMod(saturation).build())));
+    }
+
+    private static RegistryObject<Item> registerAlcoholicDrink(String name) {
+        return ITEMS.register(name, () -> new AlcoholicDrink(new Item.Properties().tab(ModCreativeTab.MOD_TAB).stacksTo(16).food(new FoodProperties.Builder().nutrition(0).saturationMod(0.0F).build())));
     }
 
     private static RegistryObject<Item> registerFoodSeedItem(String name, int nutrition, float saturation, Supplier<Block> blockSupplier) {

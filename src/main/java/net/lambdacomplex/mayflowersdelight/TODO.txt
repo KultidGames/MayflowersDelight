@@ -6,9 +6,8 @@ Fix:
 -Drying Table, if have empty hand, take output. If have item, put in input.
 -Reset Progress in Drying Table is item is taken out(?)
 -Get rid of "Inventory" on Fermenting Barrel Screen
--Put timer in Fermenting Barrel screen, make progress arrow repeat constantly
 -Make Fermenting Barrel produce noises, bubble particles
--New Fermenting Barrel model, made it orientable.
+-Fix Garlic Age 7, should not exist.
 
 Add:
 -Sided Inventory for Hopper integration Drying Table

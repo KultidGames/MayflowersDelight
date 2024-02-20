@@ -128,4 +128,16 @@ public class FermentingBarrelMenu extends AbstractContainerMenu {
             this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 144));
         }
     }
+
+    // Add this method to retrieve the current progress
+    public int getProgress() {
+        // Assuming index 0 in data holds the current progress
+        return data.get(0);
+    }
+
+    // Assuming you already have this method for max progress
+    public int getMaxProgress() {
+        // Assuming index 1 in data holds the max progress
+        return data.get(1);
+    }
 }

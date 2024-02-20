@@ -1,5 +1,8 @@
 package net.lambdacomplex.mayflowersdelight.block.entity;
 
+import net.lambdacomplex.mayflowersdelight.item.ModItems;
+import net.lambdacomplex.mayflowersdelight.item.custom.AlcoholicDrink;
+import net.lambdacomplex.mayflowersdelight.recipe.BrewingRecipeList;
 import net.lambdacomplex.mayflowersdelight.screen.FermentingBarrelMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,18 +30,18 @@ import org.jetbrains.annotations.Nullable;
 import vectorwing.farmersdelight.FarmersDelight;
 
 public class FermentingBarrelBlockEntity extends BlockEntity implements MenuProvider {
-   private final ItemStackHandler itemHandler = new ItemStackHandler(5){
-       @Override
-       protected void onContentsChanged(int slot){
-           setChanged();
-       }
-   };
+    private final ItemStackHandler itemHandler = new ItemStackHandler(5){
+        @Override
+        protected void onContentsChanged(int slot){
+            setChanged();
+        }
+    };
 
-   private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
+    private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
 
-   protected final ContainerData data;
-   private int progress = 0;
-   private int maxProgress = 78;
+    protected final ContainerData data;
+    private int progress = 0;
+    private int maxProgress = 0; // This will be dynamically updated
 
     public FermentingBarrelBlockEntity(BlockPos blockPos, BlockState state) {
         super(ModBlockEntities.FERMENTING_BARREL.get(), blockPos, state);
@@ -121,59 +124,86 @@ public class FermentingBarrelBlockEntity extends BlockEntity implements MenuProv
         Containers.dropContents(this.level, this.worldPosition, inventory);
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, FermentingBarrelBlockEntity pEntity) {
-        if(level.isClientSide()) {
+    private static void craftItem(FermentingBarrelBlockEntity entity, ItemStack output, boolean consumeEnhancer) {
+        if (consumeEnhancer) {
+            // Consume one redstone from any of the enhancement slots (1, 2, or 3)
+            for (int slot = 1; slot <= 3; slot++) {
+                if (entity.itemHandler.getStackInSlot(slot).getItem() == Items.REDSTONE) {
+                    entity.itemHandler.extractItem(slot, 1, false); // Consume 1 redstone
+                    break; // Stop after consuming from the first matching slot
+                }
+            }
+        }
+        entity.itemHandler.setStackInSlot(4, output); // Update output in slot 4
+        entity.resetProgress();
+    }
+
+    public static void tick(Level level, BlockPos pos, BlockState state, FermentingBarrelBlockEntity entity) {
+        if (level.isClientSide) {
             return;
         }
 
-        if(hasRecipe(pEntity)) {
-            pEntity.progress++;
-            setChanged(level, pos, state);
+        ItemStack inputStack = entity.itemHandler.getStackInSlot(0);
+        ItemStack outputStackInSlot = entity.itemHandler.getStackInSlot(4);
+        boolean enhanced = false;
 
-            if(pEntity.progress >= pEntity.maxProgress){
-                craftItem(pEntity);
+
+        // Check if the input slot is empty and reset progress and maxProgress
+        if (inputStack.isEmpty()) {
+            if (entity.progress != 0 || entity.maxProgress != 0) {
+                entity.progress = 0;
+                entity.maxProgress = 0; // Reset to a default or idle value
+                setChanged(level, pos, state);
             }
-        } else {
-            pEntity.resetProgress();
-            setChanged(level, pos, state);
+            return; // Skip crafting logic if there's no input
         }
+
+        // Check for enhancement
+        for (int slot = 1; slot <= 3; slot++) {
+            if (entity.itemHandler.getStackInSlot(slot).getItem() == Items.REDSTONE) {
+                enhanced = true; // Found redstone for enhancement
+                break;
+            }
+        }
+
+        for (BrewingRecipeList.Recipe recipe : BrewingRecipeList.RECIPES) {
+            if (inputStack.getItem() == recipe.getInput().getItem() && inputStack.getCount() >= recipe.getInput().getCount()) {
+                ItemStack recipeOutput = recipe.getOutput().copy();
+                if (enhanced && recipeOutput.getItem() instanceof AlcoholicDrink) {
+                    recipeOutput.getOrCreateTag().putBoolean("Enhanced", true);
+                }
+
+                // Check if crafting can proceed based on output slot condition
+                if (outputStackInSlot.isEmpty() || (outputStackInSlot.is(recipeOutput.getItem()) && ItemStack.tagMatches(outputStackInSlot, recipeOutput) && outputStackInSlot.getCount() + recipeOutput.getCount() <= outputStackInSlot.getMaxStackSize())) {
+                    if (entity.progress == 0) {
+                        entity.maxProgress = recipe.getMaxProgress();
+                    }
+                    entity.progress++;
+                    setChanged(level, pos, state);
+
+                    if (entity.progress >= entity.maxProgress) {
+                        entity.itemHandler.extractItem(0, recipe.getInput().getCount(), false); // Consume input
+                        if (!outputStackInSlot.isEmpty()) {
+                            recipeOutput.setCount(outputStackInSlot.getCount() + recipeOutput.getCount()); // Add to existing output stack
+                        }
+                        craftItem(entity, recipeOutput, enhanced);
+                    }
+                    return; // Found and processed a recipe, so exit
+                } else {
+                    // Output slot condition not met, halt progress
+                    entity.resetProgress();
+                    return;
+                }
+            }
+        }
+
+        // No valid recipe found or in progress, reset progress
+        entity.resetProgress();
     }
+
 
     private void resetProgress() {
         this.progress = 0;
+        setChanged();
     }
-    private static void craftItem(FermentingBarrelBlockEntity pEntity) {
-
-        if(hasRecipe(pEntity)) {
-            pEntity.itemHandler.extractItem(0, 1, false);
-            pEntity.itemHandler.setStackInSlot(4, new ItemStack(Items.HONEY_BOTTLE,
-                    pEntity.itemHandler.getStackInSlot(4).getCount() + 1));
-
-            pEntity.resetProgress();
-        }
-    }
-
-    private static boolean hasRecipe(FermentingBarrelBlockEntity entity) {
-        SimpleContainer inventory = new SimpleContainer(entity.itemHandler.getSlots());
-        for (int i = 0; i < entity.itemHandler.getSlots(); i++) {
-            inventory.setItem(i, entity.itemHandler.getStackInSlot(i));
-        }
-
-        boolean hasRawGemInFirstSlot = entity.itemHandler.getStackInSlot(0).getItem() == Items.BUCKET;
-
-        return hasRawGemInFirstSlot && canInsertAmountIntoOutputSlot(inventory) &&
-                canInsertItemIntoOutputSlot(inventory, new ItemStack(Items.HONEY_BOTTLE, 1));
-    }
-
-    private static boolean canInsertItemIntoOutputSlot(SimpleContainer inventory, ItemStack stack) {
-        return inventory.getItem(4).getItem() == stack.getItem() || inventory.getItem(4).isEmpty();
-    }
-
-    private static boolean canInsertAmountIntoOutputSlot(SimpleContainer inventory) {
-        return inventory.getItem(4).getMaxStackSize() > inventory.getItem(4).getCount();
-    }
-
-
-    
-
 }
